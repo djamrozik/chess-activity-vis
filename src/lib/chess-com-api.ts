@@ -57,3 +57,5 @@ const getArchivedGamesMultipleMonths = async (
 };
 
 export { getArchivedGamesSingleMonth, getArchivedGamesMultipleMonths };
+
+export type { Game };
