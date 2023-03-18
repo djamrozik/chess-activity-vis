@@ -53,6 +53,7 @@ const Home = () => {
 
   const onClickViewActivity = async () => {
     setIsLoading(true);
+    setDateToGameCount(null);
     const res = await getArchivedGamesMultipleMonths(
       username,
       yearMonthStrings
@@ -60,8 +61,6 @@ const Home = () => {
     setDateToGameCount(convertGamesToGameCount(res));
     setIsLoading(false);
   };
-
-  console.log(dateToGameCount);
 
   return (
     <div
