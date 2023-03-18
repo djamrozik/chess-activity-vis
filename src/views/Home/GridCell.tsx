@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Tooltip } from "react-tooltip";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 import ThemeContext from "@/contexts/ThemeContext";
 
@@ -10,29 +10,32 @@ type GridCellProps = {
   id: number;
 };
 
+const gridCellBgColor = {
+  light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+  dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+};
+
+const cellColorBreakPoints = [0, 4, 8, 12];
+
+const getCellColor = (gamesPlayed: number, themeClass: "light" | "dark") => {
+  const cellColorLevel = cellColorBreakPoints.reduce((curLevel, cur, i) => {
+    if (gamesPlayed >= cur && i > curLevel) {
+      return i;
+    }
+    return curLevel;
+  }, 0);
+  return gridCellBgColor[themeClass][cellColorLevel];
+};
+
 const GridCell = ({ gameCount, id, date }: GridCellProps) => {
   const { themeClass } = useContext(ThemeContext);
-
-  const defaultBgColor = themeClass === "dark" ? "#161b22" : "#ebedf0";
-
-  let bgColor = defaultBgColor;
-  if (gameCount > 0) {
-    bgColor = "#9be9a8";
-  }
-  if (gameCount >= 5) {
-    bgColor = "#40c463";
-  }
-  if (gameCount >= 10) {
-    bgColor = "#216e39";
-  }
-
   const dateFormatted = dayjs(date).format("dddd, MMMM M, YYYY");
 
   return (
     <>
       <div
         style={{
-          backgroundColor: bgColor,
+          backgroundColor: getCellColor(gameCount, themeClass),
           outlineColor: "rgba(27, 31, 35, 0.07)",
         }}
         className={`rounded-sm text-xs outline outline-1 outline-offset-[-1px]`}

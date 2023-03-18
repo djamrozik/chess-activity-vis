@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docker-build-local": "docker build . -t chess-activity-vis:latest --progress=plain",
+    "docker-run-local": "docker run -p 8080:80 chess-activity-vis:latest",
+    "docker-deploy-auth": "gcloud auth configure-docker us-east1-docker.pkg.dev",
+    "docker-deploy-tag": "docker tag chess-activity-vis:latest us-east1-docker.pkg.dev/small-side-projects-372322/chess-activity-vis/chess-activity-vis:latest",
+    "docker-deploy-push": "docker push us-east1-docker.pkg.dev/small-side-projects-372322/chess-activity-vis/chess-activity-vis:latest"
   },
   "dependencies": {
     "dayjs": "^1.11.7",

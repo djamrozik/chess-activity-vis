@@ -45,23 +45,21 @@ const convertGamesToGameCount = (
 const Home = () => {
   const [dateToGameCount, setDateToGameCount] =
     useState<DateToGameCount | null>(null);
+  const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const allGridDates = getDatesForGrid();
   const yearMonthStrings = getYearMonthStrings(allGridDates);
 
-  useEffect(() => {
-    if (dateToGameCount) {
-      return;
-    }
-
-    (async () => {
-      const res = await getArchivedGamesMultipleMonths(
-        "merkhueli",
-        yearMonthStrings
-      );
-      setDateToGameCount(convertGamesToGameCount(res));
-    })();
-  }, []);
+  const onClickViewActivity = async () => {
+    setIsLoading(true);
+    const res = await getArchivedGamesMultipleMonths(
+      username,
+      yearMonthStrings
+    );
+    setDateToGameCount(convertGamesToGameCount(res));
+    setIsLoading(false);
+  };
 
   console.log(dateToGameCount);
 
@@ -70,13 +68,33 @@ const Home = () => {
       className={`h-screen w-screen flex flex-col items-center dark:bg-[#0d1117]`}
     >
       <Navbar />
-      <div className="pt-8">
-        {!dateToGameCount && <div>Loading...</div>}
-        {dateToGameCount && (
-          <ActivityGrid
-            dateToGameCount={dateToGameCount}
-            gridDates={allGridDates}
+      <div className="pt-12">
+        <div className="flex justify-center items-center">
+          <input
+            placeholder="Username"
+            className="rounded px-2 py-1 border border-neutral-700 dark:border-none"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
+          <div
+            onClick={() => onClickViewActivity()}
+            className="dark:text-neutral-100 ml-4 rounded bg-blue-500 py-1 px-4 font-semibold hover:cursor-pointer"
+          >
+            View
+          </div>
+        </div>
+      </div>
+      <div className="pt-12 px-6 max-w-full pb-4">
+        {Boolean(!dateToGameCount && isLoading) && (
+          <div className="dark:text-neutral-100 pt-8">Loading...</div>
+        )}
+        {Boolean(dateToGameCount && !isLoading) && (
+          <div className="overflow-x-scroll flex flex-row-reverse">
+            <ActivityGrid
+              dateToGameCount={dateToGameCount as DateToGameCount}
+              gridDates={allGridDates}
+            />
+          </div>
         )}
       </div>
     </div>
