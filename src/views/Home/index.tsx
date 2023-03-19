@@ -64,20 +64,23 @@ const Home = () => {
 
   return (
     <div
-      className={`h-screen w-screen flex flex-col items-center dark:bg-[#0d1117]`}
+      className={`h-screen w-screen flex flex-col items-center dark:text-neutral-100 dark:bg-[#0d1117]`}
     >
       <Navbar />
       <div className="pt-12">
         <div className="flex justify-center items-center">
           <input
             placeholder="Username"
-            className="rounded px-2 py-1 border border-neutral-700 dark:border-none"
+            className="rounded px-2 py-1 border border-neutral-700 dark:border-none text-neutral-800"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onClickViewActivity()}
+            data-lpignore="true"
+            data-1p-ignore
           />
           <div
             onClick={() => onClickViewActivity()}
-            className="dark:text-neutral-100 ml-4 rounded bg-blue-500 py-1 px-4 font-semibold hover:cursor-pointer"
+            className="ml-4 rounded bg-blue-500 py-1 px-4 font-semibold hover:cursor-pointer"
           >
             View
           </div>
@@ -85,10 +88,10 @@ const Home = () => {
       </div>
       <div className="pt-12 px-6 max-w-full pb-4">
         {Boolean(!dateToGameCount && isLoading) && (
-          <div className="dark:text-neutral-100 pt-8">Loading...</div>
+          <div className="pt-8">Loading...</div>
         )}
         {Boolean(dateToGameCount && !isLoading) && (
-          <div className="overflow-x-scroll flex flex-row-reverse">
+          <div className="">
             <ActivityGrid
               dateToGameCount={dateToGameCount as DateToGameCount}
               gridDates={allGridDates}

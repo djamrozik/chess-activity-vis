@@ -69,7 +69,7 @@ const Navbar = () => {
   return (
     <div className="w-full border-b border-b-neutral-200 py-4 flex justify-center">
       <div className="w-[839px] font-bold text-xl flex justify-between items-center px-6">
-        <div className="dark:text-neutral-100">Chess Activity Vis</div>
+        <div>Chess Activity Vis</div>
         <Toggle />
       </div>
     </div>

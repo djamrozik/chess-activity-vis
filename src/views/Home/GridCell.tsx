@@ -15,7 +15,7 @@ const gridCellBgColor = {
   dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
 };
 
-const cellColorBreakPoints = [0, 4, 8, 12];
+const cellColorBreakPoints = [0, 1, 5, 10, 15];
 
 const getCellColor = (gamesPlayed: number, themeClass: "light" | "dark") => {
   const cellColorLevel = cellColorBreakPoints.reduce((curLevel, cur, i) => {
@@ -29,7 +29,7 @@ const getCellColor = (gamesPlayed: number, themeClass: "light" | "dark") => {
 
 const GridCell = ({ gameCount, id, date }: GridCellProps) => {
   const { themeClass } = useContext(ThemeContext);
-  const dateFormatted = dayjs(date).format("dddd, MMMM M, YYYY");
+  const dateFormatted = dayjs(date).format("dddd, MMMM D, YYYY");
 
   return (
     <>
