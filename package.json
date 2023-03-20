@@ -7,11 +7,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "docker-build-local": "docker build . -t chess-activity-vis:latest --progress=plain",
-    "docker-run-local": "docker run -p 8080:80 chess-activity-vis:latest",
-    "docker-deploy-auth": "gcloud auth configure-docker us-east1-docker.pkg.dev",
-    "docker-deploy-tag": "docker tag chess-activity-vis:latest us-east1-docker.pkg.dev/small-side-projects-372322/chess-activity-vis/chess-activity-vis:latest",
-    "docker-deploy-push": "docker push us-east1-docker.pkg.dev/small-side-projects-372322/chess-activity-vis/chess-activity-vis:latest"
+    "syncS3": "aws s3 sync dist/ s3://chess-activity-vis.nimblecode.dev --delete",
+    "invalidate-cache": "eval $(grep '^CLOUDFRONT_DISTRIBUTION_ID' .env.local) && aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --no-cli-pager --paths \"/*\"",
+    "pause": "echo \"sleeping for 5 seconds\" && sleep 5",
+    "deploy": "npm run build && npm run syncS3 && npm run pause && npm run invalidate-cache"
   },
   "dependencies": {
     "dayjs": "^1.11.7",
@@ -26,6 +25,8 @@
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
+    "prettier": "^2.8.4",
+    "prettier-plugin-tailwindcss": "^0.2.5",
     "tailwindcss": "^3.2.7",
     "typescript": "^4.9.3",
     "vite": "^4.1.0"

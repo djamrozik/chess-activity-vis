@@ -10,9 +10,12 @@ type DateToGameCount = {
   };
 };
 
+type ActivityGridState = "toSearch" | "loading" | "loaded";
+
 type ActivityGridProps = {
-  dateToGameCount: DateToGameCount;
+  dateToGameCount?: DateToGameCount;
   gridDates: Date[];
+  state: ActivityGridState;
 };
 
 type ColToMonth = {
@@ -36,7 +39,10 @@ const getColToMonth = (gridDates: Date[]): ColToMonth => {
   return res;
 };
 
-const getGameCount = (dateToGameCount: DateToGameCount, d: Date) => {
+const getGameCount = (
+  dateToGameCount: DateToGameCount | undefined,
+  d: Date
+) => {
   if (!dateToGameCount) {
     return 0;
   }
@@ -47,18 +53,38 @@ const getGameCount = (dateToGameCount: DateToGameCount, d: Date) => {
   return dateToGameCount[fullYear]?.[fullMonth]?.[day] || 0;
 };
 
-const ActivityGrid = ({ dateToGameCount, gridDates }: ActivityGridProps) => {
-  console.log(gridDates);
-  const colToMonth = getColToMonth(gridDates);
-  console.log(gridDates);
+const getTotalGamesPlayed = (dateToGameCount: DateToGameCount | undefined) => {
+  if (!dateToGameCount) {
+    return 0;
+  }
 
-  return (
+  let res = 0;
+  for (const year in dateToGameCount) {
+    for (const month in dateToGameCount[year]) {
+      for (const day in dateToGameCount[year][month]) {
+        res += dateToGameCount[year][month][day];
+      }
+    }
+  }
+
+  return res;
+};
+
+const ActivityGrid = ({
+  dateToGameCount,
+  gridDates,
+  state,
+}: ActivityGridProps) => {
+  const colToMonth = getColToMonth(gridDates);
+  const totalGamesPlayed = getTotalGamesPlayed(dateToGameCount);
+
+  const renderInnerGridContent = () => (
     <div className="flex">
       <div
         style={{
           gridTemplateRows: `repeat(7, ${cellWidth}px)`,
         }}
-        className="w-9 grid gap-1 text-xs items-center flex-shrink-0 pt-[22px]"
+        className="grid w-9 flex-shrink-0 items-center gap-1  pt-[22px] text-xs"
       >
         <div />
         <div>Mon</div>
@@ -68,17 +94,17 @@ const ActivityGrid = ({ dateToGameCount, gridDates }: ActivityGridProps) => {
         <div>Fri</div>
         <div></div>
       </div>
-      <div className="overflow-x-scroll flex flex-row-reverse">
+      <div className="flex flex-row-reverse overflow-x-scroll">
         <div>
           <div
-            className="grid text-xs gap-1 h-[22px]"
+            className="grid h-[22px] gap-1 text-xs"
             style={{
               gridTemplateColumns:
                 `${cellWidth}px `.repeat(cols - 1) + `${cellWidth}px`,
             }}
           >
             {[...new Array(cols)].map((_, i) => (
-              <div>{colToMonth[i] || ""}</div>
+              <div key={i}>{colToMonth[i] || ""}</div>
             ))}
           </div>
           <div
@@ -88,7 +114,7 @@ const ActivityGrid = ({ dateToGameCount, gridDates }: ActivityGridProps) => {
               gridTemplateRows:
                 `${cellWidth}px `.repeat(rows - 1) + `${cellWidth}px`,
             }}
-            className={`grid gap-1 grid-flow-col`}
+            className={`grid grid-flow-col gap-1`}
           >
             {gridDates.map((d, i) => (
               <GridCell
@@ -103,6 +129,31 @@ const ActivityGrid = ({ dateToGameCount, gridDates }: ActivityGridProps) => {
       </div>
     </div>
   );
+
+  return (
+    <div>
+      <div className="h-[32px] pb-2 pl-1 text-sm">
+        {state === "loaded" && (
+          <div>
+            {totalGamesPlayed.toLocaleString()}{" "}
+            {totalGamesPlayed !== 1 ? "games" : "game"} played in the last year
+          </div>
+        )}
+      </div>
+      <div className=" rounded-lg border border-gray-300 p-4 dark:border-gray-600">
+        {state === "loaded" && renderInnerGridContent()}
+        {Boolean(state === "toSearch" || state === "loading") && (
+          <div className="flex h-[123px] w-[829px] items-center justify-center text-gray-200">
+            {state === "loading"
+              ? "Loading..."
+              : "Activity grid will be shown here"}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default ActivityGrid;
+
+export type { ActivityGridState };
