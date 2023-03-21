@@ -1,10 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import {
-  getArchivedGamesMultipleMonths,
-  Game,
-  getAvailableArchives,
-} from "@/lib/chess-com-api";
+import { getArchivedGamesMultipleMonths, Game, ChessComApiError, getAvailableArchives } from "@/lib/chess-com-api";
 import { getDatesForGrid, getYearMonthStrings } from "@/lib/date";
 import ActivityGrid from "@/views/Home/ActivityGrid";
 import { ActivityGridState } from "@/views/Home/ActivityGrid";
@@ -22,9 +18,7 @@ type DateToGameCount = {
   };
 };
 
-const convertGamesToGameCount = (
-  archivedGames: ArchivedGames
-): DateToGameCount => {
+const convertGamesToGameCount = (archivedGames: ArchivedGames): DateToGameCount => {
   const res: DateToGameCount = {};
 
   for (const yearMonth in archivedGames) {
@@ -47,10 +41,7 @@ const convertGamesToGameCount = (
   return res;
 };
 
-const isYearMonthStringAvailable = (
-  yearMonthIdentifier: string,
-  availableArchives: string[]
-) => {
+const isYearMonthStringAvailable = (yearMonthIdentifier: string, availableArchives: string[]) => {
   for (const availableArchive of availableArchives) {
     if (availableArchive.endsWith(yearMonthIdentifier)) {
       return true;
@@ -60,41 +51,43 @@ const isYearMonthStringAvailable = (
 };
 
 const Home = () => {
-  const [dateToGameCount, setDateToGameCount] =
-    useState<DateToGameCount | null>(null);
+  const [dateToGameCount, setDateToGameCount] = useState<DateToGameCount | null>(null);
   const [username, setUsername] = useState("");
-  const [activityGridState, setActivityGridState] =
-    useState<ActivityGridState>("toSearch");
+  const [activityGridState, setActivityGridState] = useState<ActivityGridState>("toSearch");
+  const [activityGridError, setActivityGridError] = useState<string>("");
 
   const allGridDates = getDatesForGrid();
   const yearMonthStrings = getYearMonthStrings(allGridDates);
 
   const onClickViewActivity = async () => {
     setActivityGridState("loading");
+    setActivityGridError("");
     setDateToGameCount(null);
 
-    const availableArchives = await getAvailableArchives(username);
-    const yearMonthStringsAvailable = yearMonthStrings.filter((s) =>
-      isYearMonthStringAvailable(s, availableArchives)
-    );
-    const res = await getArchivedGamesMultipleMonths(
-      username,
-      yearMonthStringsAvailable
-    );
-
-    setDateToGameCount(convertGamesToGameCount(res));
-    setActivityGridState("loaded");
+    try {
+      const availableArchives = await getAvailableArchives(username);
+      const yearMonthStringsAvailable = yearMonthStrings.filter((s) =>
+        isYearMonthStringAvailable(s, availableArchives)
+      );
+      const res = await getArchivedGamesMultipleMonths(username, yearMonthStringsAvailable);
+      setDateToGameCount(convertGamesToGameCount(res));
+      setActivityGridState("loaded");
+    } catch (err) {
+      if (err instanceof ChessComApiError) {
+        setActivityGridError(err.message);
+      } else {
+        setActivityGridError("An unknown error occurred");
+      }
+      setActivityGridState("toSearch");
+    }
   };
 
   return (
-    <div
-      className={`flex h-screen w-screen flex-col items-center bg-gray-50 dark:bg-[#0d1117]`}
-    >
+    <div className={`flex h-screen w-screen flex-col items-center bg-gray-50 dark:bg-[#0d1117]`}>
       <Navbar />
       <div>
         <div className="max-w-md px-4 pt-20 text-center text-lg">
-          See your chess.com activity in the style of the Github commit activity
-          view.
+          See your chess.com activity in the style of the Github commit activity view.
         </div>
       </div>
       <div className="flex w-full justify-center pt-20">
@@ -105,6 +98,7 @@ const Home = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && onClickViewActivity()}
+            spellCheck="false"
             data-lpignore="true"
             data-1p-ignore
           />
@@ -122,15 +116,12 @@ const Home = () => {
             dateToGameCount={dateToGameCount as DateToGameCount}
             gridDates={allGridDates}
             state={activityGridState}
+            errorMessage={activityGridError}
           />
         </div>
       </div>
       <div className="fixed bottom-0">
-        <a
-          href="https://twitter.com/danjamrozik"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://twitter.com/danjamrozik" target="_blank" rel="noopener noreferrer">
           <div className="flex items-center rounded-tl-lg rounded-tr-lg bg-blue-900 py-2.5 px-8">
             <span className="flex items-center font-normal text-[var(--text-primary-dark)]">
               <span className="pr-2">Follow me on</span>

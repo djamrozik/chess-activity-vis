@@ -32,6 +32,13 @@ interface ArchivesResult {
   archives: string[];
 }
 
+class ChessComApiError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ChessComApiError";
+  }
+}
+
 const getArchivedGamesSingleMonth = async (
   username: string,
   yearMonthIdentifier: string
@@ -45,6 +52,12 @@ const getArchivedGamesSingleMonth = async (
 const getAvailableArchives = async (username: string) => {
   const url = `https://api.chess.com/pub/player/${username}/games/archives`;
   const res = await fetch(url);
+  if (res.status !== 200) {
+    throw new ChessComApiError(
+      "Failed to fetch archives, username likely does not exist"
+    );
+  }
+
   const resJson = (await res.json()) as ArchivesResult;
   return resJson.archives;
 };
@@ -71,6 +84,7 @@ export {
   getAvailableArchives,
   getArchivedGamesSingleMonth,
   getArchivedGamesMultipleMonths,
+  ChessComApiError,
 };
 
 export type { Game };
