@@ -140,13 +140,15 @@ const ActivityGrid = ({
           </div>
         )}
       </div>
-      <div className=" rounded-lg border border-gray-300 p-4 dark:border-gray-600">
+      <div className="rounded-lg border border-[var(--border-primary)] p-4 dark:border-[var(--border-primary-dark)]">
         {state === "loaded" && renderInnerGridContent()}
         {Boolean(state === "toSearch" || state === "loading") && (
-          <div className="flex h-[123px] w-[829px] items-center justify-center text-gray-200">
-            {state === "loading"
-              ? "Loading..."
-              : "Activity grid will be shown here"}
+          <div className="flex w-full">
+            <div className="flex h-[123px] w-[829px] items-center justify-center">
+              {state === "loading"
+                ? "Loading..."
+                : "Activity grid will be shown here"}
+            </div>
           </div>
         )}
       </div>

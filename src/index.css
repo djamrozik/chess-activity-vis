@@ -3,5 +3,16 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --text-primary: #1e293b; /* slate-800 */
+  --text-primary-dark: #e2e8f0; /* slate-200 */
+  --border-primary: #d1d5db; /* gray-300 */
+  --border-primary-dark: #4b5563; /* gray-600 */
+
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  color: var(--text-primary);
+}
+
+.dark {
+  color: var(--text-primary-dark);
 }

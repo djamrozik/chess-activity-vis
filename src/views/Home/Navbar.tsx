@@ -44,7 +44,7 @@ const Toggle = () => {
 
   return (
     <div className="flex items-center">
-      <span className="mr-3 text-gray-600 dark:text-neutral-100">
+      <span className="mr-3">
         <ToggleSunIcon />
       </span>
       <label className="relative inline-flex cursor-pointer">
@@ -58,7 +58,7 @@ const Toggle = () => {
           className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-900 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none"
         ></div>
       </label>
-      <span className="ml-3 text-gray-600 dark:text-neutral-100">
+      <span className="ml-3">
         <ToggleMoonIcon />
       </span>
     </div>
@@ -67,8 +67,8 @@ const Toggle = () => {
 
 const Navbar = () => {
   return (
-    <div className="flex w-full justify-center border-b border-b-neutral-200 py-4">
-      <div className="flex w-[909px] items-center justify-between px-6 text-xl font-bold">
+    <div className="flex w-full justify-center border-b-2 border-b-[var(--border-primary)] py-5 dark:border-b-[var(--border-primary-dark)]">
+      <div className="flex w-[909px] items-center justify-between px-6 text-xl font-semibold">
         <div>Chess Activity Vis</div>
         <Toggle />
       </div>

@@ -28,6 +28,10 @@ interface Game {
   };
 }
 
+interface ArchivesResult {
+  archives: string[];
+}
+
 const getArchivedGamesSingleMonth = async (
   username: string,
   yearMonthIdentifier: string
@@ -36,6 +40,13 @@ const getArchivedGamesSingleMonth = async (
   const res = await fetch(url);
   const resJson = await res.json();
   return resJson["games"] as Game[];
+};
+
+const getAvailableArchives = async (username: string) => {
+  const url = `https://api.chess.com/pub/player/${username}/games/archives`;
+  const res = await fetch(url);
+  const resJson = (await res.json()) as ArchivesResult;
+  return resJson.archives;
 };
 
 const getArchivedGamesMultipleMonths = async (
@@ -56,6 +67,10 @@ const getArchivedGamesMultipleMonths = async (
   return res;
 };
 
-export { getArchivedGamesSingleMonth, getArchivedGamesMultipleMonths };
+export {
+  getAvailableArchives,
+  getArchivedGamesSingleMonth,
+  getArchivedGamesMultipleMonths,
+};
 
 export type { Game };
